@@ -108,7 +108,7 @@ When a user sends request to /Chat endpoint, the authentication token is immedia
 
 ### Implementation Highlights
 
-A reference implementation of this approach can be found in the [Smart Todo App GitHub Repository](https://gitlab.aws.dev/heymanu/AmazonQDeveloperVibeCodingSamples/-/tree/main/BedrockAgentsProxy?ref_type=heads). This example demonstrates how to configure each component:
+A reference implementation of this approach can be found in the [aws-samples GitHub repository](https://github.com/aws-samples/sample-amazon-q-developer-vibe-coded-projects/tree/main/BedrockAgentsProxy). This example demonstrates how to configure each component:
 
 - **Proxy Lambda** receives only minimal privileges to query DynamoDB and decrypt tokens via AWS KMS.  
 - **Bedrock Agent** is configured with an OpenAPI schema and action groups to specify how it can interact with the backend.  
@@ -219,7 +219,7 @@ Using a proxy-based integration pattern can simplify governance reviews and stre
 
 1. Clone the repository:
 ```bash
-git clone https://gitlab.aws.dev/heymanu/AmazonQDeveloperVibeCodingSamples
+git clone https://github.com/aws-samples/sample-amazon-q-developer-vibe-coded-projects.git
 cd BedrockAgentsProxy
 ```
 

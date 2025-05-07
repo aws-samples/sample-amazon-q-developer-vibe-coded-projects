@@ -65,7 +65,7 @@ export default function Login() {
             <span className="highlight">Todo</span>
             <span>App</span>
           </h1>
-          <p>Organize your tasks with AWS Bedrock Agents</p>
+          <p>Organize your tasks with Amazon Nova Sonic</p>
         </div>
       </div>
       <div className="login-form">
