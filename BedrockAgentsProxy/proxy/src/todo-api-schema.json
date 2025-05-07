@@ -1,0 +1,425 @@
+{
+  "openapi": "3.0.0",
+  
+  "info": {
+      "title": "Smart Todo App API",
+      "version": "1.0.0",
+      "description": "APIs for managing a todo list, including listing tasks, creating new todos, deleting todos, updating todos, and managing notes."
+  },
+  "paths": {
+      "/todos": {
+          "get": {
+              "summary": "Get all todos for the user",
+              "description": "Retrieve all todos for the authenticated user, including their status and details.",
+              "operationId": "getAllTodos",
+              "responses": {
+                  "200": {
+                      "description": "List of all todos for the authenticated user",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "items": {
+                                          "type": "array",
+                                          "items": {
+                                              "$ref": "#/components/schemas/Todo"
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  }
+              }
+          },
+          "post": {
+              "summary": "Create a new todo",
+              "description": "Add a new todo for the user.",
+              "operationId": "createTodo",
+              "requestBody": {
+                  "required": true,
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/CreateTodoInput"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "201": {
+                      "description": "Todo created successfully",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Todo"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Invalid input"
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  }
+              }
+          }
+      },
+      "/todos/{id}": {
+          "get": {
+              "summary": "Get a specific todo",
+              "description": "Retrieve a todo by its ID for the authenticated user.",
+              "operationId": "getTodo",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "description": "Unique identifier of the todo."
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "Todo retrieved successfully",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Todo"
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  },
+                  "404": {
+                      "description": "Todo not found"
+                  }
+              }
+          },
+          "put": {
+              "summary": "Update a todo",
+              "description": "Update a todo by its ID for the authenticated user.",
+              "operationId": "updateTodo",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "description": "Unique identifier of the todo."
+                  }
+              ],
+              "requestBody": {
+                  "required": true,
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/UpdateTodoInput"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "200": {
+                      "description": "Todo updated successfully",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Todo"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Invalid input"
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  },
+                  "404": {
+                      "description": "Todo not found"
+                  }
+              }
+          },
+          "delete": {
+              "summary": "Delete a todo",
+              "description": "Delete a todo by its ID for the authenticated user.",
+              "operationId": "deleteTodo",
+              "parameters": [
+                  {
+                      "name": "id",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "description": "Unique identifier of the todo."
+                  }
+              ],
+              "responses": {
+                  "204": {
+                      "description": "Todo deleted successfully"
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  },
+                  "404": {
+                      "description": "Todo not found"
+                  }
+              }
+          }
+      },
+      "/todos/{todoId}/notes": {
+          "get": {
+              "summary": "Get all notes for a todo",
+              "description": "Retrieve all notes for a specific todo.",
+              "operationId": "getTodoNotes",
+              "parameters": [
+                  {
+                      "name": "todoId",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "description": "Unique identifier of the todo."
+                  }
+              ],
+              "responses": {
+                  "200": {
+                      "description": "List of notes for the todo",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "items": {
+                                          "type": "array",
+                                          "items": {
+                                              "$ref": "#/components/schemas/Note"
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  },
+                  "404": {
+                      "description": "Todo not found"
+                  }
+              }
+          },
+          "post": {
+              "summary": "Create a note for a todo",
+              "description": "Add a new note for a specific todo.",
+              "operationId": "createNote",
+              "parameters": [
+                  {
+                      "name": "todoId",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "description": "Unique identifier of the todo."
+                  }
+              ],
+              "requestBody": {
+                  "required": true,
+                  "content": {
+                      "application/json": {
+                          "schema": {
+                              "$ref": "#/components/schemas/CreateNoteInput"
+                          }
+                      }
+                  }
+              },
+              "responses": {
+                  "201": {
+                      "description": "Note created successfully",
+                      "content": {
+                          "application/json": {
+                              "schema": {
+                                  "$ref": "#/components/schemas/Note"
+                              }
+                          }
+                      }
+                  },
+                  "400": {
+                      "description": "Invalid input"
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  },
+                  "404": {
+                      "description": "Todo not found"
+                  }
+              }
+          }
+      },
+      "/todos/{todoId}/notes/{noteId}": {
+          "delete": {
+              "summary": "Delete a note",
+              "description": "Delete a note for a specific todo.",
+              "operationId": "deleteNote",
+              "parameters": [
+                  {
+                      "name": "todoId",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "description": "Unique identifier of the todo."
+                  },
+                  {
+                      "name": "noteId",
+                      "in": "path",
+                      "required": true,
+                      "schema": {
+                          "type": "string"
+                      },
+                      "description": "Unique identifier of the note."
+                  }
+              ],
+              "responses": {
+                  "204": {
+                      "description": "Note deleted successfully"
+                  },
+                  "401": {
+                      "description": "User not authenticated"
+                  },
+                  "404": {
+                      "description": "Note not found"
+                  }
+              }
+          }
+      }
+  },
+  "components": {
+      "schemas": {
+          "Todo": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "type": "string",
+                      "description": "Unique identifier for the todo."
+                  },
+                  "title": {
+                      "type": "string",
+                      "description": "Title of the todo.",
+                      "minLength": 1,
+                      "maxLength": 255
+                  },
+                  "description": {
+                      "type": "string",
+                      "description": "Detailed description of the todo.",
+                      "maxLength": 1024
+                  },
+                  "completed": {
+                      "type": "boolean",
+                      "description": "Whether the todo is completed."
+                  },
+                  "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "ISO 8601 timestamp when the todo was created."
+                  },
+                  "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "ISO 8601 timestamp when the todo was last updated."
+                  }
+              },
+              "required": ["id", "title", "completed", "createdAt", "updatedAt"]
+          },
+          "CreateTodoInput": {
+              "type": "object",
+              "properties": {
+                  "title": {
+                      "type": "string",
+                      "description": "Title of the todo.",
+                      "minLength": 1,
+                      "maxLength": 255
+                  },
+                  "description": {
+                      "type": "string",
+                      "description": "Detailed description of the todo.",
+                      "maxLength": 1024
+                  }
+              },
+              "required": ["title"]
+          },
+          "UpdateTodoInput": {
+              "type": "object",
+              "properties": {
+                  "title": {
+                      "type": "string",
+                      "description": "Title of the todo.",
+                      "minLength": 1,
+                      "maxLength": 255
+                  },
+                  "description": {
+                      "type": "string",
+                      "description": "Detailed description of the todo.",
+                      "maxLength": 1024
+                  },
+                  "completed": {
+                      "type": "boolean",
+                      "description": "Whether the todo is completed."
+                  }
+              }
+          },
+          "Note": {
+              "type": "object",
+              "properties": {
+                  "id": {
+                      "type": "string",
+                      "description": "Unique identifier for the note."
+                  },
+                  "todoId": {
+                      "type": "string",
+                      "description": "Identifier of the todo this note belongs to."
+                  },
+                  "content": {
+                      "type": "string",
+                      "description": "Content of the note.",
+                      "maxLength": 1024
+                  },
+                  "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "ISO 8601 timestamp when the note was created."
+                  }
+              },
+              "required": ["id", "todoId", "content", "createdAt"]
+          },
+          "CreateNoteInput": {
+              "type": "object",
+              "properties": {
+                  "content": {
+                      "type": "string",
+                      "description": "Content of the note.",
+                      "minLength": 1,
+                      "maxLength": 1024
+                  }
+              },
+              "required": ["content"]
+          }
+      }
+  }
+}

@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#FAFAFA" />
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF9900" />
+      <stop offset="100%" stop-color="#FEBD69" />
+    </linearGradient>
+    <linearGradient id="bot-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FEBD69" />
+      <stop offset="100%" stop-color="#FF9900" />
+    </linearGradient>
+    <linearGradient id="bot-eye-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#37C7FF" />
+      <stop offset="100%" stop-color="#007EB9" />
+    </linearGradient>
+    
+    <!-- Pattern for background -->
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="3" cy="3" r="1.5" fill="#CCCCCC" opacity="0.3" />
+    </pattern>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bg-gradient)" />
+  
+  <!-- Background pattern -->
+  <rect width="800" height="600" fill="url(#dots)" />
+  
+  <!-- Abstract shapes -->
+  <circle cx="150" cy="450" r="100" fill="#F0F0F0" opacity="0.4" />
+  <circle cx="650" cy="150" r="80" fill="#F0F0F0" opacity="0.3" />
+  <circle cx="750" cy="500" r="120" fill="#F0F0F0" opacity="0.2" />
+  <circle cx="50" cy="100" r="60" fill="#F0F0F0" opacity="0.3" />
+  
+  <!-- Decorative lines -->
+  <path d="M0,300 C200,250 400,350 800,280" stroke="#FF9900" stroke-width="2" fill="none" opacity="0.2" />
+  <path d="M0,350 C200,300 400,400 800,330" stroke="#FF9900" stroke-width="1.5" fill="none" opacity="0.15" />
+  
+  <!-- Todo list illustration -->
+  <g transform="translate(400, 280) scale(1.2)">
+    <!-- Notepad shadow -->
+    <rect x="-115" y="-145" width="240" height="300" rx="10" fill="rgba(0,0,0,0.1)" filter="blur(8px)" />
+    
+    <!-- Notepad -->
+    <rect x="-120" y="-150" width="240" height="300" rx="10" fill="#FFFFFF" />
+    <rect x="-120" y="-150" width="240" height="40" rx="10" fill="#FEBD69" />
+    
+    <!-- Spiral binding -->
+    <g>
+      <circle cx="-100" cy="-130" r="5" fill="#555555" />
+      <circle cx="-60" cy="-130" r="5" fill="#555555" />
+      <circle cx="-20" cy="-130" r="5" fill="#555555" />
+      <circle cx="20" cy="-130" r="5" fill="#555555" />
+      <circle cx="60" cy="-130" r="5" fill="#555555" />
+      <circle cx="100" cy="-130" r="5" fill="#555555" />
+    </g>
+    
+    <!-- Todo items -->
+    <g>
+      <!-- Item 1 (checked) -->
+      <rect x="-90" y="-90" width="180" height="30" rx="5" fill="#F5F5F5" />
+      <rect x="-80" y="-80" width="20" height="20" rx="3" fill="#FFFFFF" stroke="#555555" stroke-width="2" />
+      <path d="M-77,-70 L-70,-63 L-60,-80" stroke="#FF9900" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="-50" y1="-70" x2="70" y2="-70" stroke="#555555" stroke-width="2" />
+      
+      <!-- Item 2 -->
+      <rect x="-90" y="-50" width="180" height="30" rx="5" fill="#F5F5F5" />
+      <rect x="-80" y="-40" width="20" height="20" rx="3" fill="#FFFFFF" stroke="#555555" stroke-width="2" />
+      <line x1="-50" y1="-30" x2="70" y2="-30" stroke="#555555" stroke-width="2" />
+      
+      <!-- Item 3 -->
+      <rect x="-90" y="-10" width="180" height="30" rx="5" fill="#F5F5F5" />
+      <rect x="-80" y="0" width="20" height="20" rx="3" fill="#FFFFFF" stroke="#555555" stroke-width="2" />
+      <line x1="-50" y1="10" x2="70" y2="10" stroke="#555555" stroke-width="2" />
+      
+      <!-- Item 4 -->
+      <rect x="-90" y="30" width="180" height="30" rx="5" fill="#F5F5F5" />
+      <rect x="-80" y="40" width="20" height="20" rx="3" fill="#FFFFFF" stroke="#555555" stroke-width="2" />
+      <line x1="-50" y1="50" x2="70" y2="50" stroke="#555555" stroke-width="2" />
+      
+      <!-- Item 5 (checked) -->
+      <rect x="-90" y="70" width="180" height="30" rx="5" fill="#F5F5F5" />
+      <rect x="-80" y="80" width="20" height="20" rx="3" fill="#FFFFFF" stroke="#555555" stroke-width="2" />
+      <path d="M-77,90 L-70,97 L-60,80" stroke="#FF9900" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      <line x1="-50" y1="90" x2="70" y2="90" stroke="#555555" stroke-width="2" />
+    </g>
+    
+    <!-- Pencil with shadow -->
+    <g transform="translate(150, -80) rotate(45)">
+      <rect x="-12" y="-78" width="24" height="140" fill="rgba(0,0,0,0.1)" filter="blur(3px)" />
+      <rect x="-10" y="-80" width="20" height="140" fill="#FEBD69" />
+      <polygon points="0,-100 -10,-80 10,-80" fill="#555555" />
+      <rect x="-10" y="60" width="20" height="10" fill="#FF9900" />
+    </g>
+  </g>
+  
+  <!-- AI Bot/Droid Assistant -->
+  <g transform="translate(650, 400) scale(0.8)">
+    <!-- Bot shadow -->
+    <ellipse cx="0" cy="120" rx="60" ry="15" fill="rgba(0,0,0,0.1)" filter="blur(5px)" />
+    
+    <!-- Bot body -->
+    <g>
+      <!-- Main body -->
+      <rect x="-50" y="0" width="100" height="110" rx="20" fill="#555555" stroke="#777777" stroke-width="3" />
+      
+      <!-- Head -->
+      <rect x="-40" y="-50" width="80" height="70" rx="15" fill="url(#bot-gradient)" stroke="#555555" stroke-width="2" />
+      
+      <!-- Eyes -->
+      <circle cx="-15" cy="-20" r="10" fill="url(#bot-eye-gradient)" />
+      <circle cx="15" cy="-20" r="10" fill="url(#bot-eye-gradient)" />
+      <circle cx="-15" cy="-20" r="5" fill="#FFFFFF" opacity="0.7" />
+      <circle cx="15" cy="-20" r="5" fill="#FFFFFF" opacity="0.7" />
+      
+      <!-- Mouth/Speaker -->
+      <rect x="-20" y="0" width="40" height="5" rx="2" fill="#777777" />
+      
+      <!-- Antenna -->
+      <line x1="0" y1="-50" x2="0" y2="-70" stroke="#555555" stroke-width="3" />
+      <circle cx="0" cy="-70" r="5" fill="#FF9900" />
+      
+      <!-- Control panel -->
+      <rect x="-30" y="30" width="60" height="40" rx="5" fill="#777777" />
+      <circle cx="-15" cy="50" r="8" fill="#FF9900" />
+      <circle cx="15" cy="50" r="8" fill="#FEBD69" />
+      <rect x="-20" y="70" width="40" height="5" rx="2" fill="#777777" />
+      <rect x="-20" y="80" width="40" height="5" rx="2" fill="#777777" />
+      <rect x="-20" y="90" width="40" height="5" rx="2" fill="#777777" />
+    </g>
+    
+    <!-- Arms -->
+    <g>
+      <!-- Left arm -->
+      <path d="M-50,30 C-80,20 -90,60 -70,80" stroke="#555555" stroke-width="8" stroke-linecap="round" fill="none" />
+      <circle cx="-70" cy="80" r="10" fill="#555555" />
+      
+      <!-- Right arm - holding a digital pen -->
+      <path d="M50,30 C80,20 90,40 70,60" stroke="#555555" stroke-width="8" stroke-linecap="round" fill="none" />
+      <circle cx="70" cy="60" r="10" fill="#555555" />
+      <rect x="65" y="40" width="5" height="20" rx="2" fill="#FEBD69" transform="rotate(-30, 70, 60)" />
+    </g>
+    
+    <!-- Digital effects -->
+    <g>
+      <circle cx="-60" cy="-30" r="3" fill="#FF9900" opacity="0.8" />
+      <circle cx="-50" cy="-40" r="2" fill="#FF9900" opacity="0.6" />
+      <circle cx="-40" cy="-35" r="1.5" fill="#FF9900" opacity="0.7" />
+      
+      <circle cx="60" cy="-30" r="3" fill="#FF9900" opacity="0.8" />
+      <circle cx="50" cy="-40" r="2" fill="#FF9900" opacity="0.6" />
+      <circle cx="40" cy="-35" r="1.5" fill="#FF9900" opacity="0.7" />
+    </g>
+  </g>
+  
+  <!-- Decorative elements -->
+  <circle cx="200" cy="150" r="5" fill="#FF9900" opacity="0.8" />
+  <circle cx="220" cy="170" r="3" fill="#FF9900" opacity="0.6" />
+  <circle cx="180" cy="130" r="4" fill="#FF9900" opacity="0.7" />
+  
+  <circle cx="600" cy="450" r="5" fill="#FF9900" opacity="0.8" />
+  <circle cx="620" cy="470" r="3" fill="#FF9900" opacity="0.6" />
+  <circle cx="580" cy="430" r="4" fill="#FF9900" opacity="0.7" />
+</svg>

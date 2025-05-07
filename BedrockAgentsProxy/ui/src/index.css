@@ -1,0 +1,144 @@
+:root {
+  /* Color palette */
+  --color-primary: #232F3E;
+  --color-primary-light: #37475A;
+  --color-primary-dark: #131921;
+  --color-secondary: #FF9900;
+  --color-secondary-light: #FEBD69;
+  --color-secondary-dark: #E47911;
+  --color-success: #007600;
+  --color-error: #B12704;
+  
+  /* Neutral colors */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-gray-100: #F5F5F5;
+  --color-gray-200: #EAEDED;
+  --color-gray-300: #DDD;
+  --color-gray-400: #999;
+  --color-gray-500: #555;
+  --color-gray-600: #333;
+  
+  /* Functional colors */
+  --color-background: var(--color-white);
+  --color-background-secondary: var(--color-gray-200);
+  --color-text: var(--color-gray-600);
+  --color-text-light: var(--color-gray-500);
+  --color-text-inverse: var(--color-white);
+  --color-border: var(--color-gray-300);
+  
+  /* Typography */
+  --font-family: "Ember", Arial, sans-serif;
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-md: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;   /* 18px */
+  --font-size-xl: 1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;    /* 24px */
+  
+  /* Spacing */
+  --spacing-xs: 0.25rem;      /* 4px */
+  --spacing-sm: 0.5rem;       /* 8px */
+  --spacing-md: 1rem;         /* 16px */
+  --spacing-lg: 1.5rem;       /* 24px */
+  --spacing-xl: 2rem;         /* 32px */
+  
+  /* Borders */
+  --border-radius-sm: 0.25rem; /* 4px */
+  --border-radius-md: 0.5rem;  /* 8px */
+  --border-radius-lg: 0.75rem; /* 12px */
+  --border-width: 1px;
+  --border-color: var(--color-gray-300);
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s ease;
+  
+  /* Layout */
+  --header-height: 60px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-family);
+  line-height: 1.5;
+  color: var(--color-text);
+  background-color: var(--color-background-secondary);
+  margin: 0;
+  min-width: 320px;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+a:hover {
+  text-decoration: underline;
+  color: var(--color-primary-light);
+}
+
+button {
+  cursor: pointer;
+  font-family: var(--font-family);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+input, textarea, select {
+  font-family: var(--font-family);
+}
+
+/* Primary button */
+.primary-button {
+  background: linear-gradient(to bottom, var(--color-secondary-light) 0%, var(--color-secondary) 100%);
+  border: var(--border-width) solid var(--color-secondary-dark);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-black);
+  cursor: pointer;
+  font-weight: 500;
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: all var(--transition-fast);
+}
+
+.primary-button:hover {
+  background: var(--color-secondary);
+}
+
+.primary-button:active {
+  background: var(--color-secondary-dark);
+}
+
+/* Secondary button */
+.secondary-button {
+  background: linear-gradient(to bottom, var(--color-white) 0%, var(--color-gray-200) 100%);
+  border: var(--border-width) solid var(--color-gray-400);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-gray-600);
+  padding: var(--spacing-sm) var(--spacing-md);
+  transition: all var(--transition-fast);
+}

@@ -1,0 +1,12 @@
+{
+  "name": "@smart-todo-app/express-layer",
+  "version": "0.1.0",
+  "description": "Lambda layer for Express.js and other dependencies",
+  "main": "index.js",
+  "scripts": {
+    "build": "mkdir -p dist && cd nodejs && npm install --production && cd ..",
+    "clean": "rm -rf dist nodejs/node_modules"
+  },
+  "author": "",
+  "license": "ISC"
+}
