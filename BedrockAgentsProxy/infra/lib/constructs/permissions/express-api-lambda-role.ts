@@ -57,11 +57,6 @@ export class ExpressApiLambdaRoleConstruct extends Construct {
     const dynamoDbResources = [
       `arn:aws:dynamodb:${region}:${accountId}:table/${props.tableName}`
     ];
-    
-    // Only add index permissions if the table has GSIs
-    if (props.hasGlobalSecondaryIndexes) {
-      dynamoDbResources.push(`arn:aws:dynamodb:${region}:${accountId}:table/${props.tableName}/index/*`);
-    }
 
     // Add DynamoDB permissions with specific region and account
     const dynamoDbPolicy = new iam.PolicyStatement({
@@ -82,12 +77,9 @@ export class ExpressApiLambdaRoleConstruct extends Construct {
 
     // Add Bedrock Agent permissions if requested
     if (props.addBedrockPermissions) {
-      // Use specific agent ARNs if provided, otherwise use a more restrictive pattern
       const agentResources = props.bedrockAgentArns && props.bedrockAgentArns.length > 0
         ? props.bedrockAgentArns
         : [
-            `arn:aws:bedrock:${region}:${accountId}:agent/smart-todo-agent-*`,
-            `arn:aws:bedrock:${region}:${accountId}:agent-alias/smart-todo-agent-*`
           ];
       
       const bedrockPolicy = new iam.PolicyStatement({

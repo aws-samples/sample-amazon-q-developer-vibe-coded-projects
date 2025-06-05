@@ -46,9 +46,7 @@ export class BedrockAgentRoleConstruct extends Construct {
         'bedrock:InvokeAgent',
       ],
       resources: [
-        foundationModelResource,
-        `arn:aws:bedrock:${region}:${accountId}:agent/smart-todo-agent-*`,
-        `arn:aws:bedrock:${region}:${accountId}:agent-alias/smart-todo-agent-*`
+        foundationModelResource
       ]
     });
     

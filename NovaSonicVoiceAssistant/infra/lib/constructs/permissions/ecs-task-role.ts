@@ -71,8 +71,7 @@ export class EcsTaskRole extends Construct {
           'bedrock:GetFoundationModel'
         ],
         resources: [
-          // Grant access to all Bedrock models
-          `arn:aws:bedrock:${cdk.Stack.of(this).region}::foundation-model/*`,
+          `arn:aws:bedrock:${cdk.Stack.of(this).region}::foundation-model/amazon.nova-sonic-v1:0`,
         ],
       })
     );
