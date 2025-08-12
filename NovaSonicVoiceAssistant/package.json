@@ -1,0 +1,34 @@
+{
+  "name": "smart-todo-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "api",
+    "ui",
+    "infra"
+  ],
+  "scripts": {
+    "build": "npm run build:api && npm run build:ui && npm run build:infra",
+    "build:api": "npm run build -w @smart-todo-app/api",
+    "build:ui": "npm run build -w @smart-todo-app/ui",
+    "build:infra": "npm run build -w @smart-todo-app/infra",
+    "installall": "npm install && npm run install:api && npm run install:ui && npm run install:infra",
+    "install:api": "npm install -w @smart-todo-app/api",
+    "install:ui": "npm install -w @smart-todo-app/ui",
+    "install:infra": "npm install -w @smart-todo-app/infra",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:ui\"",
+    "dev:api": "npm run dev -w @smart-todo-app/api",
+    "dev:ui": "npm run dev -w @smart-todo-app/ui",
+    "deploy": "npm run deploy -w @smart-todo-app/infra && npm run update-env",
+    "deploy:first-time": "./scripts/deploy-first-time.sh",
+    "destroy": "npm run destroy -w @smart-todo-app/infra",
+    "update-env": "npm run update-env -w @smart-todo-app/infra",
+    "clean": "rm -rf node_modules && npm run clean:api && npm run clean:ui && npm run clean:infra",
+    "clean:api": "npm run clean -w @smart-todo-app/api",
+    "clean:ui": "npm run clean -w @smart-todo-app/ui",
+    "clean:infra": "npm run clean -w @smart-todo-app/infra"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

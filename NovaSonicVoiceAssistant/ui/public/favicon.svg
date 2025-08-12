@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Background using Amazon's primary dark color -->
+  <rect x="2" y="2" width="28" height="28" rx="4" fill="#232F3E" />
+  
+  <!-- Todo list lines using Amazon's white -->
+  <rect x="8" y="8" width="16" height="2" rx="1" fill="#FFFFFF" />
+  <rect x="8" y="13" width="16" height="2" rx="1" fill="#FFFFFF" />
+  <rect x="8" y="18" width="16" height="2" rx="1" fill="#FFFFFF" />
+  <rect x="8" y="23" width="10" height="2" rx="1" fill="#FFFFFF" />
+  
+  <!-- Checkmark using Amazon's secondary color (orange) -->
+  <path d="M6,13 L8,15 L12,11" stroke="#FF9900" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

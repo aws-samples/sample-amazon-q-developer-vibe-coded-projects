@@ -1,0 +1,37 @@
+digraph INFRA {
+  node [ color = "black", fillcolor = "#E6E6E6", height =1, style = "filled,bold,rounded", fontname = "Arial" ];
+  "WebsiteBucket" [ label = "WebsiteBucket
+(AWS::S3::Bucket)", shape =cylinder, fillcolor = "#FFF5CD" ];
+  "Distribution" [ label = "Distribution
+(AWS::CloudFront::Distribution)", shape =rectangle, fillcolor = "#E78F81" ];
+  "DeployWebsite" [ label = "DeployWebsite
+(Custom::CDKBucketDeployment)", shape =rectangle ];
+  "Vpc" [ label = "Vpc
+(AWS::EC2::VPC)", shape =rectangle ];
+  "LoadBalancer" [ label = "LoadBalancer
+(AWS::ElasticLoadBalancingV2::LoadBalancer)", shape =rectangle, fillcolor = "#E78F81" ];
+  "Cluster" [ label = "Cluster
+(AWS::ECS::Cluster)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "TaskRole" [ label = "TaskRole
+(AWS::IAM::Role)", shape =rectangle ];
+  "ExecutionRole" [ label = "ExecutionRole
+(AWS::IAM::Role)", shape =rectangle ];
+  "Service" [ label = "Service
+(AWS::ECS::Service)", shape =rectangle, fillcolor = "#B7E0FF" ];
+  "WafProtection" [ label = "WafProtection
+(AWS::WAFv2::WebACL)", shape =rectangle ];
+  "Database" [ label = "Database
+(AWS::DynamoDB::Table)", shape =cylinder, fillcolor = "#FFCFB3" ];
+  "Auth" [ label = "Auth
+(AWS::Cognito::UserPool)", shape =rectangle ];
+  "Distribution" -> "WebsiteBucket";
+  "DeployWebsite" -> "WebsiteBucket";
+  "DeployWebsite" -> "Distribution";
+  "LoadBalancer" -> "Vpc";
+  "Cluster" -> "Vpc";
+  "Service" -> "Cluster";
+  "Service" -> "LoadBalancer";
+  "Service" -> "TaskRole";
+  "Service" -> "ExecutionRole";
+  "WafProtection" -> "LoadBalancer";
+}

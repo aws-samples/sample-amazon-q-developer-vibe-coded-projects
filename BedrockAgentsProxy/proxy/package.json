@@ -1,0 +1,20 @@
+{
+  "name": "@smart-todo-app/proxy",
+  "version": "0.1.0",
+  "description": "Proxy Lambda for Bedrock Agent",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"No tests yet\"",
+    "clean": "rm -rf node_modules dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.777.0",
+    "@aws-sdk/client-kms": "^3.445.0",
+    "@aws-sdk/lib-dynamodb": "^3.778.0",
+    "axios": "^1.8.4",
+    "@types/node": "^20.17.27",
+    "typescript": "^5.2.2"
+  }
+}

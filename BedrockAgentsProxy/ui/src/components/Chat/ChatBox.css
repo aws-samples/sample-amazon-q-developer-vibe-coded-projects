@@ -1,0 +1,285 @@
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: var(--color-background);
+  border-radius: var(--border-radius-md); /* Match todo list rounded corners */
+}
+
+/* Chat box header */
+.chat-box-header {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bedrock-agent-title {
+  font-weight: bold;
+  color: var(--color-primary);
+  font-size: var(--font-size-md);
+}
+
+.chat-header-buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* Clear button for the chat */
+.chat-clear-button {
+  background: transparent;
+  border: none;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.chat-clear-button:hover {
+  background-color: var(--color-gray-200);
+  color: var(--color-gray-700);
+}
+
+/* Close button for the chat box */
+.chat-close-button {
+  background: transparent;
+  border: none;
+  color: var(--color-gray-500);
+  font-size: var(--font-size-lg);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  transition: color var(--transition-fast);
+}
+
+.chat-close-button:hover {
+  color: var(--color-error);
+}
+
+/* Chat messages container */
+.chat-messages {
+  flex: 1;
+  padding: var(--spacing-md);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  background-color: var(--color-background);
+  min-height: 200px; /* Ensure there's always space for messages */
+}
+
+/* Individual message styling */
+.chat-message {
+  max-width: 80%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  word-break: break-word;
+  line-height: 1.4;
+  position: relative;
+  font-size: var(--font-size-sm);
+}
+
+.user-message {
+  background-color: var(--color-secondary-light);
+  color: var(--color-text);
+  align-self: flex-end;
+  border-bottom-right-radius: var(--border-radius-sm);
+}
+
+.bot-message {
+  background-color: var(--color-gray-200);
+  color: var(--color-text);
+  align-self: flex-start;
+  border-bottom-left-radius: var(--border-radius-sm);
+}
+
+.message-content {
+  width: 100%;
+}
+
+/* Chat input form - always visible at bottom */
+.chat-input-form {
+  display: flex;
+  padding: var(--spacing-sm);
+  border-top: var(--border-width) solid var(--color-border);
+  background-color: var(--color-background); /* Match the chat box background */
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
+.chat-input-form input {
+  flex: 1;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  outline: none;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family);
+  background-color: var(--color-white); /* Ensure input has white background */
+}
+
+.chat-input-form input:focus {
+  border-color: var(--color-primary);
+}
+
+.chat-input-form button {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-left: var(--spacing-sm);
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color var(--transition-fast);
+  font-family: var(--font-family);
+}
+
+.chat-input-form button:hover:not(:disabled) {
+  background-color: var(--color-primary-light);
+}
+
+.chat-input-form button:disabled {
+  background-color: var(--color-gray-400);
+  cursor: not-allowed;
+}
+
+/* Session info display */
+.session-info {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--color-gray-100);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-gray-500);
+  font-size: var(--font-size-xs);
+  text-align: center;
+}
+
+/* Typing indicator animation */
+.typing-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.typing-indicator span {
+  height: 8px;
+  width: 8px;
+  margin: 0 2px;
+  background-color: var(--color-gray-400);
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 1.5s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Markdown styling */
+.markdown-content p {
+  margin-bottom: 0.75rem;
+  margin-top: 0;
+}
+
+.markdown-content p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  padding-left: 0;
+}
+
+.markdown-content li {
+  margin-bottom: 0.25rem;
+}
+
+.markdown-content code {
+  background-color: var(--color-gray-100);
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 0.9em;
+}
+
+.markdown-content pre {
+  background-color: var(--color-gray-100);
+  padding: 0.75rem;
+  border-radius: 5px;
+  overflow-x: auto;
+  margin-bottom: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid var(--color-gray-300);
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  color: var(--color-gray-600);
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.markdown-content h1 {
+  font-size: 1.4em;
+}
+
+.markdown-content h2 {
+  font-size: 1.3em;
+}
+
+.markdown-content h3 {
+  font-size: 1.2em;
+}
+
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  font-size: 1.1em;
+}

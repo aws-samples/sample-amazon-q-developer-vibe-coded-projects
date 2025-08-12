@@ -1,0 +1,41 @@
+{
+  "name": "smart-todo-app",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "api",
+    "ui",
+    "infra",
+    "proxy",
+    "shared/lambda-layers/express-layer"
+  ],
+  "scripts": {
+    "build": "npm run build:layers && npm run build:api && npm run build:ui && npm run build:proxy && npm run build:infra",
+    "build:layers": "npm run build -w @smart-todo-app/express-layer",
+    "build:api": "npm run build -w @smart-todo-app/api",
+    "build:ui": "npm run build -w @smart-todo-app/ui",
+    "build:proxy": "npm run build -w @smart-todo-app/proxy",
+    "build:infra": "npm run build -w @smart-todo-app/infra",
+    "installall": "npm install && npm run install:layers && npm run install:api && npm run install:ui && npm run install:proxy && npm run install:infra",
+    "install:layers": "npm install -w @smart-todo-app/express-layer",
+    "install:api": "npm install -w @smart-todo-app/api",
+    "install:ui": "npm install -w @smart-todo-app/ui",
+    "install:proxy": "npm install -w @smart-todo-app/proxy",
+    "install:infra": "npm install -w @smart-todo-app/infra",
+    "dev": "concurrently \"npm run dev:api\" \"npm run dev:ui\"",
+    "dev:api": "npm run dev -w @smart-todo-app/api",
+    "dev:ui": "npm run dev -w @smart-todo-app/ui",
+    "deploy": "npm run deploy -w @smart-todo-app/infra && npm run update-env",
+    "deploy:first-time": "./scripts/deploy-first-time.sh",
+    "destroy": "npm run destroy -w @smart-todo-app/infra",
+    "update-env": "npm run update-env -w @smart-todo-app/infra",
+    "clean": "rm -rf node_modules && npm run clean:api && npm run clean:ui && npm run clean:proxy && npm run clean:infra",
+    "clean:api": "npm run clean -w @smart-todo-app/api",
+    "clean:ui": "npm run clean -w @smart-todo-app/ui",
+    "clean:proxy": "npm run clean -w @smart-todo-app/proxy",
+    "clean:infra": "npm run clean -w @smart-todo-app/infra"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

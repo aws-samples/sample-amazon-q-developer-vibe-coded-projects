@@ -1,0 +1,29 @@
+# using platform to support deployment fron Apple new silicon chips.
+FROM --platform=linux/arm64 node:23-alpine 
+
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm install --production
+
+# Copy built application from dist folder
+COPY dist/ ./dist/
+
+# Copy environment variables if they exist
+COPY .env* ./
+
+# Set environment variables
+ENV NODE_ENV=production
+ENV PORT=3001
+
+# Install curl for health checks
+RUN apk --no-cache add curl
+
+# Expose the port
+EXPOSE 3001
+
+# Start the application
+CMD ["node", "dist/server.js"]
