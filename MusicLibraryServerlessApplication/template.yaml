@@ -1,0 +1,264 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Music Library Serverless Application
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: python3.11
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref MusicLibraryTable
+        COGNITO_USER_POOL_ID: !Ref UserPool
+        COGNITO_CLIENT_ID: !Ref UserPoolClient
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, staging, prod]
+
+Resources:
+  # DynamoDB Table
+  MusicLibraryTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub MusicLibrary-${Environment}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+        - AttributeName: GSI1PK
+          AttributeType: S
+        - AttributeName: GSI1SK
+          AttributeType: S
+        - AttributeName: GSI2PK
+          AttributeType: S
+        - AttributeName: GSI2SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: GSI1
+          KeySchema:
+            - AttributeName: GSI1PK
+              KeyType: HASH
+            - AttributeName: GSI1SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+        - IndexName: GSI2
+          KeySchema:
+            - AttributeName: GSI2PK
+              KeyType: HASH
+            - AttributeName: GSI2SK
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+
+  # Cognito User Pool
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub MusicLibrary-${Environment}
+      AutoVerifiedAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireUppercase: true
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+
+  UserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      ClientName: !Sub MusicLibrary-Client-${Environment}
+      GenerateSecret: false
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+        - USER_PASSWORD_AUTH
+
+  # API Gateway
+  MusicLibraryApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Environment
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt UserPool.Arn
+
+  # Lambda Functions
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: auth.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MusicLibraryTable
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - cognito-idp:AdminCreateUser
+                - cognito-idp:AdminSetUserPassword
+                - cognito-idp:AdminInitiateAuth
+              Resource: !GetAtt UserPool.Arn
+      Events:
+        Register:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /auth/register
+            Method: post
+            Auth:
+              Authorizer: NONE
+        Login:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /auth/login
+            Method: post
+            Auth:
+              Authorizer: NONE
+
+  SongsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: songs.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MusicLibraryTable
+      Events:
+        GetSongs:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /songs
+            Method: get
+        CreateSong:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /songs
+            Method: post
+        UpdateSong:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /songs/{song_id}
+            Method: put
+        DeleteSong:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /songs/{song_id}
+            Method: delete
+
+  PlaylistsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: backend/
+      Handler: playlists.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MusicLibraryTable
+      Events:
+        GetPlaylists:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /playlists
+            Method: get
+        CreatePlaylist:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /playlists
+            Method: post
+        UpdatePlaylist:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /playlists/{playlist_id}
+            Method: put
+        DeletePlaylist:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MusicLibraryApi
+            Path: /playlists/{playlist_id}
+            Method: delete
+
+  # S3 Bucket for Frontend
+  FrontendBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub music-library-frontend-${Environment}-${AWS::AccountId}
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  FrontendBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref FrontendBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: '*'
+            Action: s3:GetObject
+            Resource: !Sub '${FrontendBucket}/*'
+
+Outputs:
+  ApiGatewayUrl:
+    Description: API Gateway endpoint URL
+    Value: !Sub 'https://${MusicLibraryApi}.execute-api.${AWS::Region}.amazonaws.com/${Environment}'
+    Export:
+      Name: !Sub ${AWS::StackName}-ApiUrl
+
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref UserPool
+    Export:
+      Name: !Sub ${AWS::StackName}-UserPoolId
+
+  UserPoolClientId:
+    Description: Cognito User Pool Client ID
+    Value: !Ref UserPoolClient
+    Export:
+      Name: !Sub ${AWS::StackName}-UserPoolClientId
+
+  FrontendBucketName:
+    Description: S3 bucket for frontend hosting
+    Value: !Ref FrontendBucket
+    Export:
+      Name: !Sub ${AWS::StackName}-FrontendBucket
+
+  WebsiteURL:
+    Description: Website URL
+    Value: !GetAtt FrontendBucket.WebsiteURL
+    Export:
+      Name: !Sub ${AWS::StackName}-WebsiteURL
