@@ -1,0 +1,27 @@
+{
+  "name": "cdk",
+  "version": "0.1.0",
+  "bin": {
+    "cdk": "dist/bin/cdk.js"
+  },
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "clean": "rm -rf dist",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "nag-check": "node nag-check.js",
+    "nag-synth": "npx cdk synth --app \"npx ts-node --prefer-ts-exts bin/cdk.ts\""
+  },
+  "devDependencies": {
+    "@types/node": "22.7.9",
+    "aws-cdk": "2.1018.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.6.3"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-msk-alpha": "^2.200.1-alpha.0",
+    "aws-cdk-lib": "^2.200.1",
+    "cdk-nag": "^2.36.12",
+    "constructs": "^10.0.0"
+  }
+}
