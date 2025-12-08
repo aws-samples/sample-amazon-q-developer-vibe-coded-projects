@@ -1,0 +1,23 @@
+<svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="prism" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#333333;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#prism)"/>
+  <polygon points="50,100 100,80 100,120" fill="#ffffff"/>
+  <polygon points="100,80 150,70 150,75 105,82" fill="#ff0000"/>
+  <polygon points="105,82 150,75 150,80 110,85" fill="#ff8000"/>
+  <polygon points="110,85 150,80 150,85 115,88" fill="#ffff00"/>
+  <polygon points="115,88 150,85 150,90 120,92" fill="#00ff00"/>
+  <polygon points="120,92 150,90 150,95 125,95" fill="#0080ff"/>
+  <polygon points="125,95 150,95 150,100 130,98" fill="#4000ff"/>
+  <polygon points="130,98 150,100 150,105 125,105" fill="#8000ff"/>
+  <polygon points="125,105 150,105 150,110 120,108" fill="#4000ff"/>
+  <polygon points="120,108 150,110 150,115 115,112" fill="#0080ff"/>
+  <polygon points="115,112 150,115 150,120 110,115" fill="#00ff00"/>
+  <polygon points="110,115 150,120 150,125 105,118" fill="#ffff00"/>
+  <polygon points="105,118 150,125 150,130 100,120" fill="#ff8000"/>
+</svg>

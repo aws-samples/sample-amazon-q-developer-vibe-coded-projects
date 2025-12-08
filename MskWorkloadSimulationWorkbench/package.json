@@ -1,0 +1,45 @@
+{
+  "name": "workspace-root",
+  "version": "1.0.0",
+  "description": "TypeScript workspace with CDK and App projects",
+  "private": true,
+  "workspaces": [
+    "cdk",
+    "app"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "clean": "npm run clean --workspaces",
+    "deploy": "cd cdk && npx cdk deploy --require-approval never",
+    "deploy:stack": "npm run build && npm run deploy",
+    "destroy": "cd cdk && npx cdk destroy --force",
+    "destroy:stack": "npm run destroy",
+    "lint": "eslint . --ext .ts,.js",
+    "lint:fix": "eslint . --ext .ts,.js --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "nag-check": "cd cdk && npm run nag-check"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.33.1",
+    "@typescript-eslint/parser": "^8.33.1",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.6.3"
+  },
+  "keywords": [
+    "typescript",
+    "workspace",
+    "cdk",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC"
+}
