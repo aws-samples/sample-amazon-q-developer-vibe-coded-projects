@@ -16,7 +16,7 @@
     "@aws-sdk/client-kms": "^3.445.0",
     "@aws-sdk/lib-dynamodb": "^3.445.0",
     "@types/jsonwebtoken": "^9.0.9",
-    "axios": "^1.8.4",
+    "axios": "^1.13.5",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
