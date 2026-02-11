@@ -13,7 +13,7 @@
     "@aws-sdk/client-dynamodb": "^3.777.0",
     "@aws-sdk/client-kms": "^3.445.0",
     "@aws-sdk/lib-dynamodb": "^3.778.0",
-    "axios": "^1.8.4",
+    "axios": "^1.13.5",
     "@types/node": "^20.17.27",
     "typescript": "^5.2.2"
   }
