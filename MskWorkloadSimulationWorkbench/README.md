@@ -104,9 +104,35 @@ const deploymentConfig = {
 - **Node.js** 20.9+ (22+ recommended)
 - **AWS CLI** configured with appropriate credentials
 - **AWS CDK CLI** installed globally (`npm install -g aws-cdk`)
-- **Docker** (for container builds)
+- **Container Runtime** (choose one):
+  - **Docker Desktop** (traditional option)
+  - **AWS Finch** (recommended lightweight alternative)
 
 **Supported Platforms**: Windows, macOS, Linux
+
+### **Container Runtime Setup**
+
+#### **Option 1: AWS Finch (Recommended)**
+AWS Finch is a free, open-source container runtime that works seamlessly with CDK deployments:
+
+```bash
+# Install Finch
+brew install finch
+
+# Initialize and start Finch VM
+finch vm init
+
+# Configure CDK to use Finch
+export CDK_DOCKER=finch
+
+# Deploy
+npm run deploy:stack
+```
+
+#### **Option 2: Docker Desktop**
+Traditional Docker Desktop installation:
+- Download from [docker.com](https://www.docker.com/products/docker-desktop)
+- Start Docker Desktop before deployment
 
 ## ⚡ **Quick Commands**
 
