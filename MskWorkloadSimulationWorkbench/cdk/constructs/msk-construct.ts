@@ -102,7 +102,7 @@ export class MskConstruct {
             cluster.clusterArn, // Use the exact cluster ARN
           ],
         }),
-        // Topic permissions - comprehensive access to all topics in all clusters
+        // Topic permissions - scoped to this specific cluster
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
           actions: [
@@ -113,11 +113,10 @@ export class MskConstruct {
             'kafka-cluster:ReadData',
           ],
           resources: [
-            // Allow access to all topics in all clusters for this account/region
-            `arn:aws:kafka:${cluster.stack.region}:${cluster.stack.account}:topic/*`,
+            `arn:aws:kafka:${cluster.stack.region}:${cluster.stack.account}:topic/${cluster.clusterName}/*`,
           ],
         }),
-        // Consumer group permissions - comprehensive access to all groups in all clusters
+        // Consumer group permissions - scoped to this specific cluster
         new iam.PolicyStatement({
           effect: iam.Effect.ALLOW,
           actions: [
@@ -125,8 +124,7 @@ export class MskConstruct {
             'kafka-cluster:DescribeGroup',
           ],
           resources: [
-            // Allow access to all groups in all clusters for this account/region
-            `arn:aws:kafka:${cluster.stack.region}:${cluster.stack.account}:group/*`,
+            `arn:aws:kafka:${cluster.stack.region}:${cluster.stack.account}:group/${cluster.clusterName}/*`,
           ],
         }),
         // Additional MSK API permissions for cluster discovery

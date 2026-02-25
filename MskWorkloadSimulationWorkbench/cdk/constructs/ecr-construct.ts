@@ -7,6 +7,7 @@ import { Construct } from 'constructs';
 import { RemovalPolicy, Duration } from 'aws-cdk-lib';
 import { Repository, TagStatus } from 'aws-cdk-lib/aws-ecr';
 import { DockerImageAsset, Platform } from 'aws-cdk-lib/aws-ecr-assets';
+import * as fs from 'fs';
 import { Config } from '../lib/config';
 import * as path from 'path';
 
@@ -25,7 +26,10 @@ export class EcrConstruct extends Construct {
   constructor(scope: Construct, id: string, props?: EcrConstructProps) {
     super(scope, id);
 
-    const dockerfilePath = props?.dockerfilePath || path.resolve(__dirname, '../../app');
+        // Resolve app directory for both ts-node (cdk/constructs/) and compiled JS (cdk/dist/constructs/)
+    const candidates = [path.resolve(__dirname, '../../app'), path.resolve(__dirname, '../../../app')];
+    const defaultAppDir = candidates.find(p => fs.existsSync(p)) || candidates[0];
+    const dockerfilePath = props?.dockerfilePath || defaultAppDir;
 
     // Create ECR repository
     this.repository = new Repository(this, 'Repository', {

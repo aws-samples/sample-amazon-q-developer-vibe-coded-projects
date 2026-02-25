@@ -41,7 +41,14 @@ export class KafkaConfigManager {
       const envBootstrapServers = process.env.MSK_BOOTSTRAP_SERVERS;
       
       if (envBootstrapServers && envBootstrapServers !== 'RUNTIME_RESOLVED' && envBootstrapServers !== 'NOT_AVAILABLE') {
-        this.bootstrapServers = envBootstrapServers.split(',').map(broker => broker.trim());
+        const BROKER_PATTERN = /^[a-zA-Z0-9.\-]+:\d{1,5}$/;
+        this.bootstrapServers = envBootstrapServers.split(',')
+          .map(broker => broker.trim())
+          .filter(broker => BROKER_PATTERN.test(broker));
+
+        if (this.bootstrapServers.length === 0) {
+          throw new Error(`No valid bootstrap servers found in MSK_BOOTSTRAP_SERVERS: ${envBootstrapServers}`);
+        }
         
         this.logger.info({
           bootstrapServers: this.bootstrapServers,
