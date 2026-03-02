@@ -44,6 +44,7 @@ export class AppStack extends cdk.Stack {
       cluster: this.ecsCluster.getCluster(),
       ecrConstruct: this.ecrConstruct,
       deploymentConfig: deploymentConfig,
+      namespace: this.ecsCluster.namespace,
     });
 
     // Create MSK Express cluster with workbench security group for connectivity
@@ -84,6 +85,9 @@ export class AppStack extends cdk.Stack {
     
     // ECS Cluster should wait for VPC to be fully configured
     this.ecsCluster.node.addDependency(this.vpc);
+
+    // Orchestrator needs Cloud Map namespace from cluster to be ready
+    this.ecsWorkbench.node.addDependency(this.ecsCluster);
 
     // Dashboard should wait for ECS workbench to be created (for log groups)
     this.dashboard.node.addDependency(this.ecsWorkbench);

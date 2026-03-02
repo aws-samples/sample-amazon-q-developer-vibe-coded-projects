@@ -42,9 +42,9 @@ export class ConsumerLagWidgets {
             namespace: 'AWS/Kafka',
             metricName: 'MaxOffsetLag',
             dimensionsMap: {
-              'Consumer Group': `dev-mske-service-${index}-consumer-group`,
+              'Consumer Group': `${Config.envPrefix}-${Config.appPrefix}-service-${index}-consumer-group`,
               'Cluster Name': Config.getResourceName('express-cluster'),
-              'Topic': `dev-mske-service-${index}-topic-0`,
+              'Topic': `${Config.envPrefix}-${Config.appPrefix}-service-${index}-topic-0`,
             },
             statistic: Statistic.MAXIMUM,
             period: Duration.minutes(1),

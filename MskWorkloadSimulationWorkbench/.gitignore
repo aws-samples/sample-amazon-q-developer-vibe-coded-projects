@@ -46,3 +46,4 @@ coverage/
 # CDK
 cdk.out/
 *cdk.context.json
+.ominidev/

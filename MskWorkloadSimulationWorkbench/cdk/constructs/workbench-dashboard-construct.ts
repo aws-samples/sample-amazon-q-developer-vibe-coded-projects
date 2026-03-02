@@ -55,6 +55,10 @@ export class WorkbenchDashboardConstruct extends Construct {
     // Row 6: NetworkTxDropped, NetworkTxErrors, NetworkTxPackets
     this.dashboard.addWidgets(WorkingClusterWidgets.createRow6());
 
+    // 2b. INTELLIGENT REBALANCING SECTION
+    this.dashboard.addWidgets(WorkingClusterWidgets.createIntelligentRebalancingSectionHeader());
+    this.dashboard.addWidgets(WorkingClusterWidgets.createIntelligentRebalancingRow());
+
     // 3. CONSUMER LAG MONITORING SECTION (moved to match new organization)
     // This section is now handled in the Application Performance section below
 

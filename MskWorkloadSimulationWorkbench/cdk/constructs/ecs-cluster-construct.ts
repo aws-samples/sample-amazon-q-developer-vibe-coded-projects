@@ -9,6 +9,7 @@ import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import { 
   Cluster, 
 } from 'aws-cdk-lib/aws-ecs';
+import { PrivateDnsNamespace } from 'aws-cdk-lib/aws-servicediscovery';
 import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { Config } from '../lib/config';
 
@@ -20,6 +21,7 @@ export interface EcsClusterProps {
 export class EcsClusterConstruct extends Construct {
   public readonly cluster: Cluster;
   public readonly logGroup: LogGroup;
+  public readonly namespace: PrivateDnsNamespace;
 
   constructor(scope: Construct, id: string, props: EcsClusterProps) {
     super(scope, id);
@@ -31,6 +33,12 @@ export class EcsClusterConstruct extends Construct {
       logGroupName: `/aws/ecs/cluster/${Config.getResourceName('cluster')}`,
       retention: RetentionDays.ONE_WEEK,
       removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    // Create private DNS namespace for service discovery
+    this.namespace = new PrivateDnsNamespace(this, 'Namespace', {
+      name: `${Config.envPrefix}-${Config.appPrefix}.local`,
+      vpc,
     });
 
     // Create ECS cluster

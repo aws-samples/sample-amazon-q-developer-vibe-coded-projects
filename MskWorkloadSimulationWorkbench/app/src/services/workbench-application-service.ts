@@ -99,126 +99,113 @@ export class WorkbenchApplicationService {
   }
 
   /**
+   * Wait for orchestrator to confirm topics are ready
+   */
+  private async waitForTopics(): Promise<void> {
+    const serviceIndex = this.workbenchConfig.getServiceIndex();
+    const host = process.env.ORCHESTRATOR_HOST || 'orchestrator.workbench.local';
+    const port = process.env.ORCHESTRATOR_PORT || '3000';
+    const url = `http://${host}:${port}/topics/status?service=${serviceIndex}`;
+
+    this.logger.info({ url }, 'Waiting for orchestrator to confirm topics are ready');
+
+    while (true) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json() as { status: string };
+          if (data.status === 'ready') {
+            this.logger.info({ serviceIndex }, 'Topics confirmed ready by orchestrator');
+            return;
+          }
+        }
+      } catch {
+        // orchestrator not reachable yet, retry
+      }
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+
+  /**
    * Initialize Kafka components
    */
   private async initializeKafkaComponents(): Promise<void> {
     try {
-      // Get MSK configuration
       const mskConfig = ConfigService.getMskConfig();
-      if (!mskConfig) {
-        throw new Error('MSK configuration not found');
-      }
+      if (!mskConfig) throw new Error('MSK configuration not found');
 
-      this.logger.info({
-        clusterArn: mskConfig.clusterArn,
-        clusterName: mskConfig.clusterName,
-        action: 'kafka_init_start',
-      }, 'Initializing Kafka components');
+      this.logger.info({ action: 'kafka_init_start' }, 'Initializing Kafka components');
 
-      // Create Kafka client
+      // Verify topics via admin client on main thread
       const kafkaConfigManager = new KafkaConfigManager(mskConfig, this.logger);
       this.kafka = await kafkaConfigManager.createKafkaClient();
-
-      // Initialize topic manager
       const admin = this.kafka.admin();
-      this.topicManager = new MultiTopicManager(
-        admin,
-        this.workbenchConfig.getConfig(),
-        this.logger
-      );
-
-      // Ensure all topics exist
+      this.topicManager = new MultiTopicManager(admin, this.workbenchConfig.getConfig(), this.logger);
       const topicResults = await this.topicManager.ensureTopicsExist();
       this.topicManager.validateResults(topicResults);
 
-      this.logger.info({
-        topicResults,
-        action: 'topics_ensured',
-      }, 'All topics created/verified successfully');
-
-      // Initialize producer with moderate optimization
-      const kafkaProducer = this.kafka.producer({
-        maxInFlightRequests: 20,        // Increased from 5 to 20 for better throughput
-        idempotent: true,
-        transactionTimeout: 30000,
-      });
-
-      this.producer = new MultiTopicProducer(
-        kafkaProducer,
-        this.workbenchConfig.getConfig(),
-        this.logger,
-        this.metricsService || undefined
-      );
-
-      // Initialize consumer with stable settings
-      const kafkaConsumer = this.kafka.consumer({
-        groupId: this.workbenchConfig.getConsumerGroupId(),
-        sessionTimeout: 30000,
-        rebalanceTimeout: 60000,
-        heartbeatInterval: 3000,
-      });
-
-      this.consumer = new MultiTopicConsumer(
-        kafkaConsumer,
-        this.workbenchConfig.getConfig(),
-        this.logger,
-        this.metricsService || undefined
-      );
-
+      this.logger.info({ action: 'topics_ensured' }, 'All topics verified successfully');
       this.isInitialized = true;
-
-      this.logger.info({
-        serviceIndex: this.workbenchConfig.getServiceIndex(),
-        serviceName: this.workbenchConfig.getServiceName(),
-        topics: this.workbenchConfig.getTopics(),
-        action: 'kafka_init_complete',
-      }, 'Kafka components initialized successfully');
-
     } catch (error) {
-      this.logger.error({
-        error: error instanceof Error ? error.message : 'Unknown error',
-        action: 'kafka_init_error',
-      }, 'Failed to initialize Kafka components');
+      this.logger.error({ error: error instanceof Error ? error.message : 'Unknown error', action: 'kafka_init_error' }, 'Failed to initialize Kafka components');
       throw error;
     }
   }
 
   /**
-   * Start all Kafka services
+   * Start all Kafka services using worker threads
    */
   private async startKafkaServices(): Promise<void> {
-    if (!this.isInitialized || !this.producer || !this.consumer || !this.metricsService) {
-      throw new Error('Kafka components not initialized');
+    if (!this.isInitialized || !this.metricsService) throw new Error('Kafka components not initialized');
+
+    const { Worker } = require('worker_threads');
+    const path = require('path');
+    const taskCpu = Number(process.env.TASK_CPU) || 256;
+    const NUM_PRODUCER_THREADS = taskCpu <= 256 ? 4 : Math.floor(taskCpu / 32);
+
+    this.logger.info({ numProducerThreads: NUM_PRODUCER_THREADS, action: 'kafka_services_start' }, 'Starting Kafka services in worker threads');
+
+    this.metricsService.start();
+    const metricsService = this.metricsService;
+
+    // Spawn 8 producer workers with staggered starts (2s apart)
+    for (let i = 0; i < NUM_PRODUCER_THREADS; i++) {
+      if (i > 0) await new Promise(r => setTimeout(r, 2000));
+      const w = new Worker(path.resolve(__dirname, '..', 'workers', 'producer-worker.js'), {
+        workerData: {
+          topics: this.workbenchConfig.getTopics(),
+          serviceName: this.workbenchConfig.getServiceName(),
+          serviceIndex: this.workbenchConfig.getServiceIndex(),
+          messageSizeBytes: this.workbenchConfig.getMessageSizeBytes(),
+        },
+      });
+      w.on('message', (msg: any) => {
+        if (msg.type === 'metrics') metricsService.incrementMessagesSent(msg.sent);
+      });
+      w.on('error', (err: Error) => this.logger.error({ error: err.message, thread: i }, 'Producer worker crashed'));
+      this.logger.info({ thread: i }, `Producer worker ${i} started`);
     }
 
-    try {
-      this.logger.info({ action: 'kafka_services_start' }, 'Starting Kafka services');
+    // Single consumer worker
+    const cw = new Worker(path.resolve(__dirname, '..', 'workers', 'consumer-worker.js'), {
+      workerData: {
+        topics: this.workbenchConfig.getTopics(),
+        serviceName: this.workbenchConfig.getServiceName(),
+        serviceIndex: this.workbenchConfig.getServiceIndex(),
+        consumerGroupId: this.workbenchConfig.getConsumerGroupId(),
+        partitionsPerTopic: this.workbenchConfig.getPartitionsPerTopic(),
+      },
+    });
+    cw.on('message', (msg: any) => {
+      if (msg.type === 'metrics') {
+        metricsService.incrementMessagesReceived(msg.received);
+        if (msg.latencies) msg.latencies.forEach((l: number) => metricsService.recordLatency(l));
+      }
+    });
+    cw.on('error', (err: Error) => this.logger.error({ error: err.message }, 'Consumer worker crashed'));
 
-      // Start metrics service first
-      this.metricsService.start();
-
-      // Start producer and consumer in parallel
-      await Promise.all([
-        this.producer.start(),
-        this.consumer.start(),
-      ]);
-
-      this.isRunning = true;
-
-      this.logger.info({
-        producerStatus: this.producer.getStatus(),
-        consumerStatus: this.consumer.getStatus(),
-        metricsStatus: this.metricsService.getStatus(),
-        action: 'kafka_services_started',
-      }, 'All Kafka services started successfully');
-
-    } catch (error) {
-      this.logger.error({
-        error: error instanceof Error ? error.message : 'Unknown error',
-        action: 'kafka_services_start_error',
-      }, 'Failed to start Kafka services');
-      throw error;
-    }
+    this.isRunning = true;
+    this.logger.info({ action: 'kafka_services_started' }, 'All workers started');
   }
 
   /**
@@ -375,6 +362,9 @@ export class WorkbenchApplicationService {
       }, `Workbench application started on port ${port}`);
 
       try {
+        // Wait for orchestrator to confirm topics are ready
+        await this.waitForTopics();
+
         // Initialize and start Kafka services
         await this.initializeKafkaComponents();
         await this.startKafkaServices();

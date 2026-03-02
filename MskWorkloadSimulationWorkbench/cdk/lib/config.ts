@@ -21,14 +21,14 @@ import {
 
 export const AppName = 'MskExpressApp';
 export const AppPrefix = 'mske';
-export const EnvPrefix = 'dev'; // dev, staging, prod
+export const EnvPrefix = 'test'; // dev, staging, prod
 
 // ============================================================================
 // MSK BROKER CONFIGURATION
 // ============================================================================
 
 export const mskBrokerConfig: MskBrokerConfig = {
-  numberOfBrokers: 1,  // 1 per AZ = 3 total brokers (recommended for cost optimization)
+  numberOfBrokers: 2,  // 2 per AZ = 6 total brokers
   instanceType: 'express.m7g.large',  // MSK Express instance type
 };
 
@@ -38,13 +38,11 @@ export const mskBrokerConfig: MskBrokerConfig = {
 
 export const deploymentConfig: DeploymentConfig = {
   services: [
-    { topics: 2, partitionsPerTopic: 6, instances: 1, messageSizeBytes: 1024 ,cpu: 512, memoryMiB: 1024 },   // 1KB messages, default resources (256 CPU, 512 MiB)
-    { topics: 1, partitionsPerTopic: 3, instances: 1, messageSizeBytes: 512 },    // 512B messages, default resources
-    { topics: 3, partitionsPerTopic: 4, instances: 1, messageSizeBytes: 4096, cpu: 1024, memoryMiB: 2048 },   // 4KB messages, default resources
-    //{ topics: 1, partitionsPerTopic: 3, instances: 12, messageSizeBytes: 512, cpu: 512, memoryMiB: 1024 },    // 512B messages, medium resources
-    { topics: 1, partitionsPerTopic: 3, instances: 2, messageSizeBytes: 2048, cpu: 1024, memoryMiB: 2048 },   // 512B messages, large resources
-    { topics: 1, partitionsPerTopic: 3, instances: 5, messageSizeBytes: 512, cpu: 2048, memoryMiB: 4096 },   // 512B messages, extra large resources
-    // Add more services as needed for your performance tests
+    { topics: 2, partitionsPerTopic: 100, instances: 5, messageSizeBytes: 1024 ,cpu: 512, memoryMiB: 1024 },
+    { topics: 1, partitionsPerTopic: 100, instances: 5, messageSizeBytes: 512 },
+    { topics: 3, partitionsPerTopic: 100, instances: 5, messageSizeBytes: 4096, cpu: 1024, memoryMiB: 2048 },
+    { topics: 1, partitionsPerTopic: 200, instances: 10, messageSizeBytes: 2048, cpu: 1024, memoryMiB: 2048 },
+    { topics: 1, partitionsPerTopic: 100, instances: 25, messageSizeBytes: 512, cpu: 2048, memoryMiB: 4096 },
   ],
 };
 

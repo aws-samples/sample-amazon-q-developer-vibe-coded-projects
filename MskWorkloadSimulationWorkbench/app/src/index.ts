@@ -1,18 +1,23 @@
 /**
  * MSK Express Workbench Application - Main Entry Point
- * Multi-topic Kafka performance testing workbench
+ * Routes to orchestrator or workload based on ROLE env var
  */
 
-import { WorkbenchApplicationService } from './services/workbench-application-service';
+const role = process.env.ROLE || 'workload';
 
-// Initialize and start the workbench application
-const app = new WorkbenchApplicationService();
-
-// Start the application
-app.start().catch((error) => {
-  process.stderr.write(`Failed to start workbench application: ${error}\n`);
-  process.exit(1);
-});
-
-// Export the Express app for testing purposes
-export default app.getApp();
+if (role === 'orchestrator') {
+  import('./services/orchestrator-service').then(({ OrchestratorService }) => {
+    new OrchestratorService().start().catch((error) => {
+      process.stderr.write(`Failed to start orchestrator: ${error}\n`);
+      process.exit(1);
+    });
+  });
+} else {
+  import('./services/workbench-application-service').then(({ WorkbenchApplicationService }) => {
+    const app = new WorkbenchApplicationService();
+    app.start().catch((error) => {
+      process.stderr.write(`Failed to start workbench application: ${error}\n`);
+      process.exit(1);
+    });
+  });
+}

@@ -27,12 +27,14 @@ import { LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { EcrConstruct } from './ecr-construct';
 import { Config } from '../lib/config';
 import { DeploymentConfig, ServiceConfig, NamingHelper, TaskResourceValidator } from '../lib/config-types-and-helpers';
+import { PrivateDnsNamespace, DnsRecordType } from 'aws-cdk-lib/aws-servicediscovery';
 
 export interface EcsWorkbenchProps {
   vpc: Vpc;
   cluster: Cluster;
   ecrConstruct: EcrConstruct;
   deploymentConfig: DeploymentConfig;
+  namespace: PrivateDnsNamespace;
 }
 
 export interface WorkbenchService {
@@ -46,6 +48,7 @@ export interface WorkbenchService {
 
 export class EcsWorkbenchConstruct extends Construct {
   public readonly services: WorkbenchService[] = [];
+  public readonly orchestratorService: FargateService | undefined;
   private sharedTaskRole: Role;
   private sharedExecutionRole: Role;
   private sharedSecurityGroup: SecurityGroup;
@@ -53,10 +56,13 @@ export class EcsWorkbenchConstruct extends Construct {
   constructor(scope: Construct, id: string, props: EcsWorkbenchProps) {
     super(scope, id);
 
-    const { vpc, cluster, ecrConstruct, deploymentConfig } = props;
+    const { vpc, cluster, ecrConstruct, deploymentConfig, namespace } = props;
 
     // Create shared resources that all services will use
     this.createSharedResources(vpc);
+
+    // Create orchestrator service
+    this.orchestratorService = this.createOrchestratorService(vpc, cluster, ecrConstruct, deploymentConfig, namespace);
 
     // Create individual services based on configuration
     deploymentConfig.services.forEach((serviceConfig, index) => {
@@ -142,6 +148,87 @@ export class EcsWorkbenchConstruct extends Construct {
   }
 
   /**
+   * Create orchestrator ECS service with Service Connect
+   */
+  private createOrchestratorService(
+    vpc: Vpc,
+    cluster: Cluster,
+    ecrConstruct: EcrConstruct,
+    deploymentConfig: DeploymentConfig,
+    namespace: PrivateDnsNamespace
+  ): FargateService {
+    const serviceName = Config.getResourceName('orchestrator');
+
+    const logGroup = new LogGroup(this, 'OrchestratorLogGroup', {
+      logGroupName: `/aws/ecs/workbench/${serviceName}`,
+      retention: RetentionDays.ONE_WEEK,
+      removalPolicy: RemovalPolicy.DESTROY,
+    });
+
+    const taskDefinition = new FargateTaskDefinition(this, 'OrchestratorTaskDefinition', {
+      family: `${serviceName}-task`,
+      cpu: 256,
+      memoryLimitMiB: 512,
+      taskRole: this.sharedTaskRole,
+      executionRole: this.sharedExecutionRole,
+    });
+
+    const container = taskDefinition.addContainer('OrchestratorContainer', {
+      containerName: `${serviceName}-container`,
+      image: ContainerImage.fromDockerImageAsset(ecrConstruct.getDockerImageAsset()),
+      essential: true,
+      logging: LogDriver.awsLogs({ logGroup, streamPrefix: 'ecs' }),
+      environment: {
+        NODE_ENV: 'production',
+        PORT: '3000',
+        AWS_REGION: cluster.stack.region,
+        LOG_LEVEL: 'info',
+        ROLE: 'orchestrator',
+        ENV_PREFIX: Config.envPrefix,
+        APP_PREFIX: Config.appPrefix,
+        DEPLOYMENT_CONFIG: JSON.stringify(deploymentConfig),
+        MSK_BROKERS_PER_AZ: Config.mskBroker.numberOfBrokers.toString(),
+      },
+      healthCheck: {
+        command: ['CMD-SHELL', 'wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1'],
+        interval: Duration.seconds(30),
+        timeout: Duration.seconds(10),
+        retries: 3,
+        startPeriod: Duration.seconds(60),
+      },
+    });
+
+    container.addPortMappings({
+      containerPort: 3000,
+      protocol: Protocol.TCP,
+      name: 'http',
+    });
+
+    const service = new FargateService(this, 'OrchestratorService', {
+      serviceName,
+      cluster,
+      taskDefinition,
+      desiredCount: 1,
+      minHealthyPercent: 0,
+      maxHealthyPercent: 100,
+      vpcSubnets: { subnets: vpc.isolatedSubnets },
+      securityGroups: [this.sharedSecurityGroup],
+      assignPublicIp: false,
+      enableExecuteCommand: true,
+      circuitBreaker: { rollback: true },
+      cloudMapOptions: {
+        name: 'orchestrator',
+        cloudMapNamespace: namespace,
+        containerPort: 3000,
+        dnsRecordType: DnsRecordType.A,
+        dnsTtl: Duration.seconds(10),
+      },
+    });
+
+    return service;
+  }
+
+  /**
    * Create individual ECS service
    */
   private createService(
@@ -194,12 +281,14 @@ export class EcsWorkbenchConstruct extends Construct {
       PORT: '3000',
       AWS_REGION: cluster.stack.region,
       LOG_LEVEL: 'info',
+      ORCHESTRATOR_HOST: `orchestrator.${Config.envPrefix}-${Config.appPrefix}.local`,
       // Service-specific configuration
       SERVICE_INDEX: serviceIndex.toString(),
       SERVICE_NAME: serviceName,
       KAFKA_TOPICS: topics.join(','),
       PARTITIONS_PER_TOPIC: serviceConfig.partitionsPerTopic.toString(),
       MESSAGE_SIZE_BYTES: serviceConfig.messageSizeBytes.toString(),
+      TASK_CPU: cpu.toString(),
     };
 
     // Add container to task definition with configurable resources
@@ -252,6 +341,7 @@ export class EcsWorkbenchConstruct extends Construct {
         },
       ],
       enableExecuteCommand: true, // Enable ECS Exec for debugging
+      circuitBreaker: { rollback: true },
     });
 
     // NO AUTO-SCALING - Deploy exactly the configured number of instances
@@ -273,7 +363,15 @@ export class EcsWorkbenchConstruct extends Construct {
     // Add MSK policy to shared task role
     this.sharedTaskRole.addManagedPolicy(mskPolicy);
 
-    // Add MSK environment variables to all services
+    // Add MSK environment variables to orchestrator
+    if (this.orchestratorService) {
+      const orchestratorContainer = this.orchestratorService.taskDefinition.defaultContainer!;
+      orchestratorContainer.addEnvironment('MSK_CLUSTER_ARN', mskCluster.clusterArn);
+      orchestratorContainer.addEnvironment('MSK_CLUSTER_NAME', mskCluster.clusterName);
+      orchestratorContainer.addEnvironment('MSK_BOOTSTRAP_SERVERS', bootstrapBrokers);
+    }
+
+    // Add MSK environment variables to all workload services
     this.services.forEach((workbenchService) => {
       workbenchService.container.addEnvironment('MSK_CLUSTER_ARN', mskCluster.clusterArn);
       workbenchService.container.addEnvironment('MSK_CLUSTER_NAME', mskCluster.clusterName);

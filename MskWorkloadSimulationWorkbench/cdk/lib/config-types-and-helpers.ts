@@ -208,8 +208,8 @@ export class NamingHelper {
       if (service.topics < 1 || service.topics > 50) {
         errors.push(`Service ${index}: topics must be between 1 and 50`);
       }
-      if (service.partitionsPerTopic < 1 || service.partitionsPerTopic > 100) {
-        errors.push(`Service ${index}: partitions per topic must be between 1 and 100`);
+      if (service.partitionsPerTopic < 1 || service.partitionsPerTopic > 1000) {
+        errors.push(`Service ${index}: partitions per topic must be between 1 and 1000`);
       }
       if (service.instances < 1 || service.instances > 50) {
         errors.push(`Service ${index}: instances must be between 1 and 50`);

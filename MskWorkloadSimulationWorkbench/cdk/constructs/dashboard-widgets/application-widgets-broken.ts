@@ -19,6 +19,7 @@ import {
   GraphWidgetView,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { DeploymentConfig, NamingHelper } from '../../lib/config-types-and-helpers';
+import { Config } from '../../lib/config';
 
 export class ApplicationWidgets {
   
@@ -50,7 +51,7 @@ export class ApplicationWidgets {
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesSentPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             // Removed Environment dimension to make it environment-agnostic
           },
           statistic: Statistic.AVERAGE,  // Rate metrics should use AVERAGE
@@ -67,7 +68,7 @@ export class ApplicationWidgets {
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesReceivedPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             // Removed Environment dimension to make it environment-agnostic
           },
           statistic: Statistic.AVERAGE,  // Rate metrics should use AVERAGE
@@ -108,7 +109,7 @@ export class ApplicationWidgets {
             namespace: 'MSKExpress/Kafka',
             metricName: 'MessagesSentPerSecond',
             dimensionsMap: {
-              Service: `dev-mske-service-${index}`,
+              Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
               // Removed Environment dimension to make it environment-agnostic
             },
             statistic: Statistic.AVERAGE,  // Rate metrics should use AVERAGE
@@ -121,7 +122,7 @@ export class ApplicationWidgets {
             namespace: 'MSKExpress/Kafka',
             metricName: 'MessagesReceivedPerSecond',
             dimensionsMap: {
-              Service: `dev-mske-service-${index}`,
+              Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
               // Removed Environment dimension to make it environment-agnostic
             },
             statistic: Statistic.AVERAGE,  // Rate metrics should use AVERAGE
@@ -152,7 +153,7 @@ export class ApplicationWidgets {
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessageLatencyAverage',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             // Removed Environment dimension to make it environment-agnostic
           },
           statistic: Statistic.AVERAGE,  // Latency averages should use AVERAGE
@@ -171,7 +172,7 @@ export class ApplicationWidgets {
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessageLatencyP95',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             // Removed Environment dimension to make it environment-agnostic
           },
           statistic: Statistic.AVERAGE,  // P95 values should use AVERAGE
@@ -212,7 +213,7 @@ export class ApplicationWidgets {
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesSentPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             // Removed Environment dimension to make it environment-agnostic
           },
           statistic: Statistic.AVERAGE,  // Rate metrics should use AVERAGE
@@ -228,7 +229,7 @@ export class ApplicationWidgets {
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessageLatencyAverage',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             // Removed Environment dimension to make it environment-agnostic
           },
           statistic: Statistic.AVERAGE,  // Latency averages should use AVERAGE
@@ -274,7 +275,7 @@ export class ApplicationWidgets {
             namespace: 'MSKExpress/Kafka',
             metricName: 'ConsumerLag',
             dimensionsMap: {
-              Service: `dev-mske-service-${index}`,
+              Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
               // Removed Environment dimension to make it environment-agnostic
             },
             statistic: Statistic.AVERAGE,  // Lag values should use AVERAGE

@@ -14,6 +14,7 @@ import {
   MathExpression,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { DeploymentConfig, NamingHelper } from '../../lib/config-types-and-helpers';
+import { Config } from '../../lib/config';
 
 export class ApplicationWidgets {
   
@@ -65,7 +66,7 @@ Shows total messages per second across all instances for each service`,
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesSentPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             Environment: 'production',
           },
           statistic: Statistic.AVERAGE,
@@ -78,7 +79,7 @@ Shows total messages per second across all instances for each service`,
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesReceivedPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             Environment: 'production',
           },
           statistic: Statistic.AVERAGE,
@@ -99,7 +100,7 @@ Shows total messages per second across all instances for each service`,
         namespace: 'MSKExpress/Kafka',
         metricName: 'MessagesSentPerSecond',
         dimensionsMap: {
-          Service: `dev-mske-service-${index}`,
+          Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
           Environment: 'production',
         },
         statistic: Statistic.AVERAGE,  // Use AVERAGE to get per-second rates
@@ -111,7 +112,7 @@ Shows total messages per second across all instances for each service`,
         namespace: 'MSKExpress/Kafka',
         metricName: 'MessagesReceivedPerSecond',
         dimensionsMap: {
-          Service: `dev-mske-service-${index}`,
+          Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
           Environment: 'production',
         },
         statistic: Statistic.AVERAGE,  // Use AVERAGE to get per-second rates
@@ -185,7 +186,7 @@ Shows total messages per second across all instances for each service`,
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesSentPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${serviceIndex}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${serviceIndex}`,
             Environment: 'production',
           },
           statistic: Statistic.AVERAGE,
@@ -197,7 +198,7 @@ Shows total messages per second across all instances for each service`,
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesReceivedPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${serviceIndex}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${serviceIndex}`,
             Environment: 'production',
           },
           statistic: Statistic.AVERAGE,
@@ -252,7 +253,7 @@ Shows total messages per second across all instances for each service`,
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessageLatencyAverage',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             Environment: 'production',
           },
           statistic: Statistic.AVERAGE,
@@ -280,7 +281,7 @@ Shows total messages per second across all instances for each service`,
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessagesSentPerSecond',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             Environment: 'production',
           },
           statistic: Statistic.AVERAGE,
@@ -296,7 +297,7 @@ Shows total messages per second across all instances for each service`,
           namespace: 'MSKExpress/Kafka',
           metricName: 'MessageLatencyAverage',
           dimensionsMap: {
-            Service: `dev-mske-service-${index}`,
+            Service: `${Config.envPrefix}-${Config.appPrefix}-service-${index}`,
             Environment: 'production',
           },
           statistic: Statistic.AVERAGE,

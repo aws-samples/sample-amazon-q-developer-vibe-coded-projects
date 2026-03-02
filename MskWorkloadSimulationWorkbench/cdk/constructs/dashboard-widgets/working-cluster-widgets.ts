@@ -240,4 +240,44 @@ export class WorkingClusterWidgets {
       })
     );
   }
+
+  /**
+   * Intelligent Rebalancing section header
+   */
+  static createIntelligentRebalancingSectionHeader(): TextWidget {
+    return new TextWidget({
+      markdown: '## 🔄 Intelligent Rebalancing & Cluster Capacity',
+      width: 24,
+      height: 1,
+    });
+  }
+
+  /**
+   * Intelligent Rebalancing metrics row
+   */
+  static createIntelligentRebalancingRow(): Row {
+    return new Row(
+      new GraphWidget({
+        title: 'Intelligent Rebalancing: In Progress',
+        width: 8,
+        height: 5,
+        left: [this.createClusterMetric('RebalanceInProgress', 'RebalanceInProgress')],
+        view: GraphWidgetView.TIME_SERIES,
+      }),
+      new GraphWidget({
+        title: 'Cluster Under-Provisioned',
+        width: 8,
+        height: 5,
+        left: [this.createClusterMetric('UnderProvisioned', 'UnderProvisioned')],
+        view: GraphWidgetView.TIME_SERIES,
+      }),
+      new GraphWidget({
+        title: 'Global Partition Count',
+        width: 8,
+        height: 5,
+        left: [this.createClusterMetric('GlobalPartitionCount', 'GlobalPartitionCount')],
+        view: GraphWidgetView.TIME_SERIES,
+      })
+    );
+  }
 }

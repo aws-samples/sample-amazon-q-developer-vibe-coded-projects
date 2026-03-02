@@ -22,7 +22,7 @@ export class MskConstruct {
     // Create MSK Express cluster
     const cluster = new msk.Cluster(scope, Config.getResourceId('MskExpressCluster'), {
       clusterName: Config.getResourceName('express-cluster'),
-      kafkaVersion: msk.KafkaVersion.V3_6_0,
+      kafkaVersion: msk.KafkaVersion.V3_9_X_KRAFT,
       numberOfBrokerNodes: Config.mskBroker.numberOfBrokers,
       vpc,
       encryptionInTransit: {

@@ -14,12 +14,11 @@ export class HealthService {
 
       // Check workbench application status if available
       if (this._workbenchApp) {
-        const workbenchReady = this._workbenchApp.isReady();
         const config = this._workbenchApp.getConfig();
         
         kafkaStatus = {
           workbench: {
-            ready: workbenchReady,
+            ready: this._workbenchApp.isReady(),
             serviceIndex: config.getServiceIndex(),
             serviceName: config.getServiceName(),
             topics: config.getTopics(),
@@ -28,7 +27,8 @@ export class HealthService {
           }
         };
         
-        isHealthy = workbenchReady;
+        // Always healthy — ECS should not kill tasks while waiting for topics
+        isHealthy = true;
       }
       
       this._logger.info({
