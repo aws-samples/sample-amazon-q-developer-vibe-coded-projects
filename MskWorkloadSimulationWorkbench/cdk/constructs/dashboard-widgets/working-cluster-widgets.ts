@@ -277,6 +277,20 @@ export class WorkingClusterWidgets {
         height: 5,
         left: [this.createClusterMetric('GlobalPartitionCount', 'GlobalPartitionCount')],
         view: GraphWidgetView.TIME_SERIES,
+      }),
+      new GraphWidget({
+        title: 'LeaderCount Per Broker',
+        width: 8,
+        height: 5,
+        left: this.createBrokerMetrics('LeaderCount', Unit.COUNT),
+        view: GraphWidgetView.TIME_SERIES,
+      }),
+      new GraphWidget({
+        title: 'PartitionCount Per Broker (incl. replicas)',
+        width: 8,
+        height: 5,
+        left: this.createBrokerMetrics('PartitionCount', Unit.COUNT),
+        view: GraphWidgetView.TIME_SERIES,
       })
     );
   }
